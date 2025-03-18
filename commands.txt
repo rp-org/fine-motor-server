@@ -1,0 +1,8 @@
+python -m venv venv
+
+venv/Scripts/activate
+
+deactivate
+
+uvicorn main:app --reload
+uvicorn main:app --host 0.0.0.0 --port 8000

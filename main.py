@@ -45,7 +45,7 @@ async def fine_assess_endpoint(file: UploadFile = File(...), colorpattern: str =
     except json.JSONDecodeError:
         return JSONResponse(content={"error": "Invalid colorpattern JSON"}, status_code=400)
 
-    # assess the image
+    # assess image
     result = predict_image(img_path, colorpattern_dict["pattern"])
 
     # cleanup - delete the temp image file

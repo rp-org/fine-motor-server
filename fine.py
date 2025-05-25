@@ -101,7 +101,7 @@ def sort_labels(label_file):
 # checks all boxes
 def is_horizontally_aligned(rectangles, img_height, tolerance_percentage=20):
     # average bounding box height
-    avg_box_height = sum(h for _, y, _, h, _ in rectangles) / len(rectangles)  # Average height of detected boxes
+    avg_box_height = sum(h for _, y, _, h, _ in rectangles) / len(rectangles)
     
     tolerance = avg_box_height * (tolerance_percentage / 100)
     print(f"Tolerance Percentage: {tolerance_percentage}", f"Tolerance: {tolerance}")

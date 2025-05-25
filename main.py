@@ -16,7 +16,7 @@ app.add_middleware(
     allow_headers=["*"],  # Allow all headers
 )
 
-# Save images in temp directory
+# temp directory to save images
 TEMP_DIR = "temp_dir"
 os.makedirs(TEMP_DIR, exist_ok=True)
 

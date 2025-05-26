@@ -34,7 +34,7 @@ jobs:
     uses: ./.github/workflows/deploy.yaml
     with:
       target_directory: "/home/MUmaira/fine-motor-server"
-      branch: "master"
+      branch: "develop"
       service_name: "test-sp-app.service"
     secrets:
       SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}

@@ -57,4 +57,4 @@ async def fine_assess_endpoint(file: UploadFile = File(...), colorpattern: str =
 # test api
 @app.get("/")
 def read_root():
-    return {"message": "Hello, World!"}
+    return {"message": "Server Online!"}

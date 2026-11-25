@@ -46,6 +46,71 @@ def predict_image(image_path, expected_pattern):
 
     sorted_yolo_output = sort_labels(labels_file)
 
+    # SAVE SORTED YOLO OUTPUT START
+    sorted_labels_file = os.path.join(save_dir, "labels", f"{filename}_sorted.txt")
+    with open(sorted_labels_file, "w") as f:
+        for label in sorted_yolo_output:
+            class_id, x_center, y_center, width, height = label
+            f.write(f"{class_id} {x_center} {y_center} {width} {height}\n")
+    # SAVE SORTED YOLO OUTPUT END
+
+    # LINE AND CENTER MARKER DRAWING LOGIC START
+    # Load the YOLO image (with boxes)
+    yolo_saved_img_path = os.path.join(str(save_dir), f"{filename}.jpg")
+    img_line = cv.imread(yolo_saved_img_path)
+    img_norm_coords = img_line.copy()  # Copy to write norm coords separately
+    img_pixel_coords = img_line.copy()  # Copy to write pixel coords separately
+
+    # Get the y_center of the 0th object (normalized)
+    _, x_center, y_center, width, height = sorted_yolo_output[0]
+
+    # Convert normalized y_center to pixel coordinates
+    y_pixel = int(y_center * image_height)
+
+    # Draw a horizontal line across all image at y_pixel
+    line_color = (0, 0, 255)  # Red
+    line_thickness = 10
+    for img in [img_line, img_norm_coords, img_pixel_coords]:
+        cv.line(img, (0, y_pixel), (image_width, y_pixel), line_color, thickness=line_thickness)
+
+    # Draw X mark on each bounding box center
+    for _, x_center, y_center, _, _ in sorted_yolo_output:
+        x_pixel = int(x_center * image_width)
+        y_pixel = int(y_center * image_height)
+
+        # Draw an "X" at the center
+        marker_size = 40
+        marker_color = (0, 0, 0)  # Black
+
+        thickness = 5
+
+        # Draw X on all images
+        for img in [img_line, img_norm_coords, img_pixel_coords]:
+            cv.line(img, (x_pixel - marker_size, y_pixel - marker_size),
+                        (x_pixel + marker_size, y_pixel + marker_size), marker_color, thickness)
+            cv.line(img, (x_pixel - marker_size, y_pixel + marker_size),
+                        (x_pixel + marker_size, y_pixel - marker_size), marker_color, thickness)
+
+        # Normalized values text (on img_norm_coords)
+        norm_text = f"({x_center:.2f}, {y_center:.2f})"
+        cv.putText(img_norm_coords, norm_text, (x_pixel + 10, y_pixel - 10), cv.FONT_HERSHEY_DUPLEX,
+                3.5, (0, 0, 0), 8)
+
+        # Pixel values text (on img_pixel_coords)
+        pixel_text = f"({x_pixel}, {y_pixel})"
+        cv.putText(img_pixel_coords, pixel_text, (x_pixel + 10, y_pixel - 10), cv.FONT_HERSHEY_DUPLEX,
+                3.5, (0, 0, 0), 8)
+    
+    # Save the image with the line and X marks
+    img_line_path = os.path.join(save_dir, f"{filename}_line.jpg")
+    img_norm_coords_path = os.path.join(save_dir, f"{filename}_norm_line.jpg")
+    img_pixel_coords_path = os.path.join(save_dir, f"{filename}_pixel_line.jpg")
+    
+    cv.imwrite(img_line_path, img_line)
+    cv.imwrite(img_norm_coords_path, img_norm_coords)
+    cv.imwrite(img_pixel_coords_path, img_pixel_coords)
+    # LINE AND CENTER MARKER DRAWING LOGIC END
+
     # class to color mapping
     class_to_color = results[0].names
 
